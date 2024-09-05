@@ -22,8 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('login', [AuthController::class, 'signin']);
-Route::post('register', [AuthController::class, 'signup']);
+// Route::post('login', [AuthController::class, 'signin']);
+// Route::post('register', [AuthController::class, 'signup']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -58,8 +58,16 @@ Route::get('show-product/{id}', [ProductController::class, 'show']);
 Route::put('update-product/{id}', [ProductController::class, 'update']);
 Route::delete('delete-product/{id}', [ProductController::class, 'destroy']);
 
-Route::get('fetch-all-users', [UserController::class, 'index']);
-Route::post('save-user', [UserController::class, 'store']);
-Route::get('show-user/{id}', [UserController::class, 'show']);
-Route::put('update-user/{id}', [UserController::class, 'update']);
-Route::delete('delete-user/{id}', [UserController::class, 'destroy']);
+// Route::get('fetch-all-users', [UserController::class, 'index']);
+// Route::post('save-user', [UserController::class, 'store']);
+// Route::get('show-user/{id}', [UserController::class, 'show']);
+// Route::put('update-user/{id}', [UserController::class, 'update']);
+// Route::delete('delete-user/{id}', [UserController::class, 'destroy']);
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('/fetch-all-users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
+});
