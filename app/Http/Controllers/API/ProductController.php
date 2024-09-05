@@ -7,62 +7,36 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Validator;
 use Exception;
 
 class ProductController extends Controller
 {
     /**
-     * Instantiate a new ProductController instance.
-     */
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    //     $this->middleware('permission:create-product|edit-product|delete-product', ['only' => ['index', 'show']]);
-    //     $this->middleware('permission:create-product', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:edit-product', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:delete-product', ['only' => ['destroy']]);
-    // }
-
-    /**
-     * Display a listing of the resource.
+     * Display a listing of the products.
      */
     public function index()
     {
         try {
             $products = Product::all();
 
-            $result = array(
+            return response()->json([
                 'status' => 'true',
-                'message' => count($products) . " Products(s) fetched!",
+                'message' => count($products) . " Product(s) fetched!",
                 'data' => $products
-            );
-            $responseCode = 200; //Success
-
-            return response()->json($result, $responseCode);
+            ], 200); // Success
 
         } catch (Exception $e) {
-            $result = array(
+            return response()->json([
                 'status' => 'false',
-                'message' => "API failed due to an errors!",
+                'message' => 'API failed due to an error!',
                 'error' => $e->getMessage()
-            );
-            return response()->json($result, 500);
+            ], 500); // Internal server error
         }
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create(): View
-    {
-        return view('products.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Store a newly created product in storage.
      */
     public function store(StoreProductRequest $request)
     {
@@ -72,39 +46,36 @@ class ProductController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $result = array(
+            return response()->json([
                 "status" => "false",
-                "message" => "Validation error occured!",
+                "message" => "Validation error occurred!",
                 'error_message' => $validator->errors()
-            );
-            return response()->json($result, 400); // Bad request
+            ], 400); // Bad request
         }
 
-        $product = Product::create([
-            "name" => $request->name,
-            "description" => $request->description,
-        ]);
+        try {
+            $product = Product::create([
+                "name" => $request->name,
+                "description" => $request->description,
+            ]);
 
-        if ($product->id) {
-            $result = array(
+            return response()->json([
                 "status" => "true",
-                "message" => "Product Created!",
+                "message" => "Product created successfully!",
                 "data" => $product
-            );
-            $responseCode = 200;
-        } else {
-            $result = array(
-                "status" => "false",
-                "message" => "Something went wrong!"
-            );
-            $responseCode = 400;
-        }
+            ], 201); // Created
 
-        return response()->json($result, $responseCode);
+        } catch (Exception $e) {
+            return response()->json([
+                "status" => "false",
+                "message" => "Something went wrong!",
+                'error' => $e->getMessage()
+            ], 500); // Internal server error
+        }
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified product.
      */
     public function show($id)
     {
@@ -112,32 +83,19 @@ class ProductController extends Controller
         if (!$product) {
             return response()->json([
                 'status' => 'false',
-                'message' => "Product not Found!",
-            ], 404);
+                'message' => "Product not found!",
+            ], 404); // Not found
         }
 
-        $result = array(
+        return response()->json([
             'status' => 'true',
-            'message' => "Product Found!",
+            'message' => "Product found!",
             'data' => $product
-        );
-        $responseCode = 200; //Success
-
-        return response()->json($result, $responseCode);
+        ], 200); // Success
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product): View
-    {
-        return view('products.edit', [
-            'product' => $product
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * Update the specified product in storage.
      */
     public function update(UpdateProductRequest $request, $id)
     {
@@ -145,41 +103,45 @@ class ProductController extends Controller
         if (!$product) {
             return response()->json([
                 'status' => 'false',
-                'message' => "Product not Found!",
-            ], 404);
+                'message' => "Product not found!",
+            ], 404); // Not found
         }
 
-        //Validation
         $validator = Validator::make($request->all(), [
             "name" => "required",
             "description" => "required",
         ]);
 
         if ($validator->fails()) {
-            $result = array(
+            return response()->json([
                 "status" => "false",
-                "message" => "Validation error occured!",
+                "message" => "Validation error occurred!",
                 'error_message' => $validator->errors()
-            );
-            return response()->json($result, 400); // Bad request
+            ], 400); // Bad request
         }
 
-        //Update Code
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->save();
+        try {
+            $product->name = $request->name;
+            $product->description = $request->description;
+            $product->save();
 
-        $result = array(
-            "status" => "true",
-            "message" => "Product updated Successfully!",
-            'data' => $product
-        );
+            return response()->json([
+                "status" => "true",
+                "message" => "Product updated successfully!",
+                'data' => $product
+            ], 200); // Success
 
-        return response()->json($result, 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "status" => "false",
+                "message" => "Something went wrong!",
+                'error' => $e->getMessage()
+            ], 500); // Internal server error
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified product from storage.
      */
     public function destroy($id)
     {
@@ -187,18 +149,25 @@ class ProductController extends Controller
         if (!$product) {
             return response()->json([
                 'status' => 'false',
-                'message' => "Product not Found!",
-            ], 404);
+                'message' => "Product not found!",
+            ], 404); // Not found
         }
 
-        $product->delete();
-        $result = array(
-            'status' => 'true',
-            'message' => "Product has been deleted Successfully!",
-            'data' => $product
-        );
-        $responseCode = 200; //Success
+        try {
+            $product->delete();
 
-        return response()->json($result, $responseCode);
+            return response()->json([
+                'status' => 'true',
+                'message' => "Product deleted successfully!",
+                'data' => $product
+            ], 200); // Success
+
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'false',
+                'message' => "Something went wrong!",
+                'error' => $e->getMessage()
+            ], 500); // Internal server error
+        }
     }
 }
