@@ -40,9 +40,12 @@ class UserController extends Controller
     {
         $input = $request->all();
         $input['password'] = Hash::make($request->password);
-
+        // Create the user
         $user = User::create($input);
+        // Assign role(s) to the user
         $user->assignRole($request->roles);
+        // Load roles into the user model to include in the response
+        $user->load('roles');
 
         return response()->json(['message' => 'New user is added successfully.', 'user' => $user], 201);
     }
@@ -52,7 +55,13 @@ class UserController extends Controller
      */
     public function show(User $user): JsonResponse
     {
-        return response()->json($user);
+        // Load the roles relationship
+        $user->load('roles');
+
+        return response()->json([
+            'message' => 'User details retrieved successfully.',
+            'user' => $user
+        ]);
     }
 
     /**
@@ -62,14 +71,19 @@ class UserController extends Controller
     {
         $input = $request->all();
 
+        // Check if a new password is provided and hash it
         if (!empty($request->password)) {
             $input['password'] = Hash::make($request->password);
         } else {
+            // Exclude the password if it's not being updated
             $input = $request->except('password');
         }
-
+        // Update the user details
         $user->update($input);
+        // Sync the roles with the provided roles
         $user->syncRoles($request->roles);
+        // Load roles to include them in the response
+        $user->load('roles');
 
         return response()->json(['message' => 'User is updated successfully.', 'user' => $user]);
     }
@@ -87,6 +101,6 @@ class UserController extends Controller
         $user->syncRoles([]);
         $user->delete();
 
-        return response()->json(['message' => 'User is deleted successfully.']);
+        return response()->json(['message' => 'User is deleted successfully.', 'user' => $user]);
     }
 }

@@ -24,71 +24,29 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Route::post('login', [AuthController::class, 'signin']);
-// Route::post('register', [AuthController::class, 'signup']);
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+Route::put('update/{id}', [AuthController::class, 'update']);
+Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('logout', [AuthController::class, 'logout']);
 
-    // Route::get('fetch-all-users', [UserController::class, 'index']);
-    // Route::post('save-user', [UserController::class, 'store']);
-    // Route::get('show-user/{id}', [UserController::class, 'show']);
-    // Route::put('update-user/{id}', [UserController::class, 'update']);
-    // Route::delete('delete-user/{id}', [UserController::class, 'destroy']);
-
-    // Route::get('roles-fetch-all-posts', [RoleController::class, 'index']);
-    // Route::post('save-post', [RoleController::class, 'store']);
-    // Route::get('show-post/{id}', [RoleController::class, 'show']);
-    // Route::put('update-post/{id}', [RoleController::class, 'update']);
-    // Route::delete('delete-post/{id}', [RoleController::class, 'destroy']);
-
-    // Route::get('fetch-all-products', [ProductController::class, 'index']);
-    // Route::post('save-product', [ProductController::class, 'store']);
-    // Route::get('show-product/{id}', [ProductController::class, 'show']);
-    // Route::put('update-product/{id}', [ProductController::class, 'update']);
-    // Route::delete('delete-product/{id}', [ProductController::class, 'destroy']);
-
-});
-
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-// Route::get('fetch-all-products', [ProductController::class, 'index']);
-// Route::post('save-product', [ProductController::class, 'store']);
-// Route::get('show-product/{id}', [ProductController::class, 'show']);
-// Route::put('update-product/{id}', [ProductController::class, 'update']);
-// Route::delete('delete-product/{id}', [ProductController::class, 'destroy']);
-
-// Route::get('fetch-all-users', [UserController::class, 'index']);
-// Route::post('save-user', [UserController::class, 'store']);
-// Route::get('show-user/{id}', [UserController::class, 'show']);
-// Route::put('update-user/{id}', [UserController::class, 'update']);
-// Route::delete('delete-user/{id}', [UserController::class, 'destroy']);
-
-Route::middleware('auth:sanctum')->group(function () {
+    // User routes
     Route::get('/fetch-all-users', [UserController::class, 'index']);
     Route::post('/save-user', [UserController::class, 'store']);
     Route::get('/show-user/{user}', [UserController::class, 'show']);
     Route::put('update-user/{user}', [UserController::class, 'update']);
     Route::delete('/delete-user/{user}', [UserController::class, 'destroy']);
 
+    // Role routes
     Route::get('fetch-all-roles', [RoleController::class, 'index']);
 
+    // Product routes
     Route::get('fetch-all-products', [ProductController::class, 'index']);
     Route::post('save-product', [ProductController::class, 'store']);
     Route::get('show-product/{id}', [ProductController::class, 'show']);
     Route::put('update-product/{id}', [ProductController::class, 'update']);
     Route::delete('delete-product/{id}', [ProductController::class, 'destroy']);
-});
-
-
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
-// Route::put('update/{id}', [AuthController::class, 'update']);
-Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
-Route::post('reset-password', [AuthController::class, 'resetPassword']);
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('logout', [AuthController::class, 'logout']);
 });
