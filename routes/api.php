@@ -3,10 +3,11 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\ProductController;
-use App\Http\Controllers\API\AuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -53,11 +54,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('fetch-all-products', [ProductController::class, 'index']);
-Route::post('save-product', [ProductController::class, 'store']);
-Route::get('show-product/{id}', [ProductController::class, 'show']);
-Route::put('update-product/{id}', [ProductController::class, 'update']);
-Route::delete('delete-product/{id}', [ProductController::class, 'destroy']);
+// Route::get('fetch-all-products', [ProductController::class, 'index']);
+// Route::post('save-product', [ProductController::class, 'store']);
+// Route::get('show-product/{id}', [ProductController::class, 'show']);
+// Route::put('update-product/{id}', [ProductController::class, 'update']);
+// Route::delete('delete-product/{id}', [ProductController::class, 'destroy']);
 
 // Route::get('fetch-all-users', [UserController::class, 'index']);
 // Route::post('save-user', [UserController::class, 'store']);
@@ -67,10 +68,18 @@ Route::delete('delete-product/{id}', [ProductController::class, 'destroy']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/fetch-all-users', [UserController::class, 'index']);
-    Route::post('/users', [UserController::class, 'store']);
-    Route::get('/users/{user}', [UserController::class, 'show']);
-    Route::put('/users/{user}', [UserController::class, 'update']);
-    Route::delete('/users/{user}', [UserController::class, 'destroy']);
+    Route::post('/save-user', [UserController::class, 'store']);
+    Route::get('/show-user/{user}', [UserController::class, 'show']);
+    Route::put('update-user/{user}', [UserController::class, 'update']);
+    Route::delete('/delete-user/{user}', [UserController::class, 'destroy']);
+
+    Route::get('fetch-all-roles', [RoleController::class, 'index']);
+
+    Route::get('fetch-all-products', [ProductController::class, 'index']);
+    Route::post('save-product', [ProductController::class, 'store']);
+    Route::get('show-product/{id}', [ProductController::class, 'show']);
+    Route::put('update-product/{id}', [ProductController::class, 'update']);
+    Route::delete('delete-product/{id}', [ProductController::class, 'destroy']);
 });
 
 

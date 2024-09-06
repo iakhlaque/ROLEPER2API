@@ -108,7 +108,7 @@ class AuthController extends Controller
     public function forgotPassword(Request $request)
     {
         // Validate the incoming request
-        $this->validate($request, ['email' => 'required|email']);
+        $request->validate(['email' => 'required|email']);
 
         // Attempt to send the password reset link
         $response = Password::broker()->sendResetLink(
@@ -117,12 +117,13 @@ class AuthController extends Controller
 
         // Check the response status and return appropriate message
         if ($response === Password::RESET_LINK_SENT) {
-            return back()->with('status', trans($response));
+            return response()->json(['message' => trans($response)], 200);
         }
 
         // If sending failed, return with error
-        return back()->withErrors(['email' => trans($response)]);
+        return response()->json(['error' => trans($response)], 400);
     }
+
 
     // Reset password
     public function resetPassword(Request $request)
@@ -149,10 +150,29 @@ class AuthController extends Controller
     }
 
     // Logout the user
+    // public function logout(Request $request)
+    // {
+    //     $request->user()->tokens()->delete();
+
+    //     return response()->json(['message' => 'Logout successful'], 200);
+    // }
+
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
+        // Check if the user is authenticated
+        if (!$request->user()) {
+            return response()->json(['error' => 'Unauthenticated or Already Logout!'], 401);
+        }
 
-        return response()->json(['message' => 'Logout successful'], 200);
+        try {
+            // Attempt to delete all tokens for the authenticated user
+            $request->user()->tokens()->delete();
+
+            return response()->json(['message' => 'Logout successful'], 200);
+        } catch (\Exception $e) {
+            // Return an error message in case of any exception
+            return response()->json(['error' => 'An error occurred while logging out. Please try again.'], 500);
+        }
     }
+
 }

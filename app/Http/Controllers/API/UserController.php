@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api');
+        $this->middleware('auth:sanctum');
         $this->middleware('permission:create-user|edit-user|delete-user', ['only' => ['index', 'show']]);
         $this->middleware('permission:create-user', ['only' => ['store']]);
         $this->middleware('permission:edit-user', ['only' => ['update']]);
@@ -29,7 +29,7 @@ class UserController extends Controller
      */
     public function index(): JsonResponse
     {
-        $users = User::latest('id')->paginate(3);
+        $users = User::latest('id')->paginate(10);
         return response()->json($users, 200);
     }
 

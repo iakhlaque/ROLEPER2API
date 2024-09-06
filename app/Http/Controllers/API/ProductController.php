@@ -15,6 +15,15 @@ class ProductController extends Controller
     /**
      * Display a listing of the products.
      */
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+        $this->middleware('permission:create-product|edit-product|delete-product', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create-product', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-product', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete-product', ['only' => ['destroy']]);
+    }
+
     public function index()
     {
         try {
