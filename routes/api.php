@@ -37,16 +37,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/fetch-all-users', [UserController::class, 'index']);
     Route::post('/save-user', [UserController::class, 'store']);
     Route::get('/show-user/{user}', [UserController::class, 'show']);
-    Route::put('update-user/{user}', [UserController::class, 'update']);
+    Route::put('/update-user/{user}', [UserController::class, 'update']);
     Route::delete('/delete-user/{user}', [UserController::class, 'destroy']);
 
     // Role routes
-    Route::get('fetch-all-roles', [RoleController::class, 'index']);
+    Route::get('/fetch-all-roles', [RoleController::class, 'index']);
+    Route::post('/save-role', [RoleController::class, 'store']);
+    Route::get('/show-role/{role}', [RoleController::class, 'show']);
+    Route::put('/update-role/{role}', [RoleController::class, 'update']);
+    Route::delete('/delete-role/{role}', [RoleController::class, 'destroy']);
 
     // Product routes
-    Route::get('fetch-all-products', [ProductController::class, 'index']);
-    Route::post('save-product', [ProductController::class, 'store']);
-    Route::get('show-product/{id}', [ProductController::class, 'show']);
-    Route::put('update-product/{id}', [ProductController::class, 'update']);
-    Route::delete('delete-product/{id}', [ProductController::class, 'destroy']);
+    Route::get('/fetch-all-products', [ProductController::class, 'index']);
+    Route::post('/save-product', [ProductController::class, 'store']);
+    Route::get('/show-product/{id}', [ProductController::class, 'show']);
+    Route::put('/update-product/{id}', [ProductController::class, 'update']);
+    Route::delete('/delete-product/{id}', [ProductController::class, 'destroy']);
 });
